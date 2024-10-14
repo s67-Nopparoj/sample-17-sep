@@ -1,4 +1,4 @@
-int[][] grid = {{1, 2, 1, 2}, {3, 4, 1, 2}, {2, 1, 3, 4}};
+int[][] grid = {{1, 2, 1, 3}, {2, 4, 1, 2}, {2, 1, 3, 4}};
 int rows = grid.length;
 int cols = grid[0].length;
 int w;
@@ -26,6 +26,7 @@ void draw() {
             rect(j*w, i*h, w, h);
             
             if (matched[i][j]) {
+                correctbg(i, j);
                 int value = grid[i][j];
                 draw_lines(25+j*w, 25+i*h, value);
             }
@@ -38,7 +39,10 @@ void draw() {
 void mouseClicked() {
     int col = (mouseX - 25) / w;
     int row = (mouseY - 25) / h;
+    
+    if (!matched[row][col]) {
     checkClick(row, col);
+    }
 }
 
 void checkClick(int row, int col) {
@@ -55,12 +59,22 @@ void checkClick(int row, int col) {
             println("Match");
             matched[first_select[0]][first_select[1]] = true;
             matched[second_select[0]][second_select[1]] = true;
+            correctbg(first_select[0], first_select[1]);
+            correctbg(second_select[0], second_select[1]);
         } else {
-          println("Not Match");
-          reset_clicked();
+            println("Not Match");
+            delay(3000);
+            reset_clicked();
         }
     }
     firstClick = !firstClick;
+}
+
+void correctbg(int row, int col) {
+    fill(0, 255, 0);
+    noStroke();
+    rect(col*w, row*h, w, h);
+    stroke(0);
 }
 
 void reset_clicked() {

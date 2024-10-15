@@ -7,6 +7,7 @@ int[] first_select = {-1, -1};
 int[] second_select = {-1, -1};
 boolean firstClick = true; 
 boolean[][] matched = new boolean[rows][cols];
+boolean gamewin = false;
 
 void setup() {
     size(500, 500);
@@ -17,18 +18,26 @@ void setup() {
 }
 
 void draw() {
+    if (gamewin) {
+        background(255);
+        textSize(32);
+        fill(0);
+        text("Winner !!", width / 2 - 50, height / 2);
+        return;
+    }
+
     int i = 0;
     while (i < rows) {
         int j = 0;
         while (j < cols) {
             noFill();
             stroke(0);
-            rect(j*w, i*h, w, h);
+            rect(j * w, i * h, w, h);
             
             if (matched[i][j]) {
                 correctbg(i, j);
                 int value = grid[i][j];
-                draw_lines(25+j*w, 25+i*h, value);
+                draw_lines(25 + j * w, 25 + i * h, value);
             }
             j++;
         }
@@ -37,11 +46,15 @@ void draw() {
 }
 
 void mouseClicked() {
+    if (gamewin) {
+        return;
+    }
+    
     int col = (mouseX - 25) / w;
     int row = (mouseY - 25) / h;
     
     if (!matched[row][col]) {
-    checkClick(row, col);
+        checkClick(row, col);
     }
 }
 
@@ -51,7 +64,7 @@ void checkClick(int row, int col) {
         first_select = new int[] {row,col};
         draw_lines(25+col*w, 25+row*h, value);
     } 
-    else if (!firstClick) {
+    else {
         second_select = new int[] {row,col};
         draw_lines(25+col*w, 25+row*h, value);
         
@@ -61,6 +74,7 @@ void checkClick(int row, int col) {
             matched[second_select[0]][second_select[1]] = true;
             correctbg(first_select[0], first_select[1]);
             correctbg(second_select[0], second_select[1]);
+            checkWin();
         } else {
             println("Not Match");
             delay(3000);
@@ -70,9 +84,20 @@ void checkClick(int row, int col) {
     firstClick = !firstClick;
 }
 
+void checkWin() {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (!matched[i][j]) {
+                return;
+            }
+        }
+    }
+    gamewin = true;
+}
+
 void correctbg(int row, int col) {
     fill(0, 255, 0);
-    noStroke();
+    noStroke(); 
     rect(col*w, row*h, w, h);
     stroke(0);
 }
